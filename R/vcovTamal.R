@@ -1,34 +1,5 @@
-#' @title sandwich in groups
-#' @description XXXX
-#' @param fm estimate of transformed data
-#' @param dfcw robust degrees of freedom
-#' @param cluster group cluster
-clx <- function(fm=et, dfcw=dfcw, cluster=gx){
-  # fm<-et
-  # dfcw<-dfcw
-  # cluster<-gx
-  #
-  M<-length(unique(cluster))
-  N<-length(cluster)
-  dfc<-(M/(M-1))*((N-1)/(N-fm$rank))
-  u<-apply(
-    estfun(fm),
-    2,
-    function(x) {
-      tapply(x, cluster, sum)
-    }
-  )
-  # meat<-crossprod(u)/N
-  # sx <- summary.lm(fm)
-  # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
-  # vcovCL<- dfc*1/N*bread%*%meat%*%bread
-  vcovCL<- dfc*sandwich(fm, meat=crossprod(u)/N)*dfcw
-  # coeftest(fm, vcovCL)
-  return(vcovCL)
-}
-
-
 #' @title Group clustering of panel data esitmates
+#'
 #' @description vcovTamal, creates a robust covariance variance matrix clustered at group level for \code{lm} objects.
 #' Clustering is based on Angist and Pischke (XXXX), XXXX and XXX resulting in Stata(TM) like standard errors of
 #' regression coefficients.
@@ -165,26 +136,39 @@ vcovTamal<-function(
   if (model=="within"){
     dfcw <- et$df / (et$df - (M-1))  # dfcw<- (N-K)/( (N-K)-(M-1) )
   }
-  # dfc <- (M/(M-1)) * ((N-1)/(N-K))
 
-  ## XXXX
+  clx <- function(fm=et, dfcw=dfcw, cluster=gx){
+    # fm<-et
+    # dfcw<-dfcw
+    # cluster<-gx
+
+    M<-length(unique(cluster))
+    N<-length(cluster)
+    dfc<-(M/(M-1))*((N-1)/(N-fm$rank)) # dfc <- (M/(M-1)) * ((N-1)/(N-K))
+    u<-apply(
+      estfun(fm),
+      2,
+      function(x) {
+        tapply(x, cluster, sum)
+      }
+    )
+    # meat<-crossprod(u)/N
+    # sx <- summary.lm(fm)
+    # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
+    # vcovCL<- dfc*1/N*bread%*%meat%*%bread
+    vcovCL<- dfc * sandwich(x=fm, meat.=crossprod(u)/N) * dfcw
+    # coeftest(fm, vcovCL)
+    return(vcovCL)
+  }
   vcn<-clx(et, dfcw, gx)
 
-  ##compare estimates
-  # summary(e)
-  # summary(et)
-  # coeftest(e)
-  # coeftest(et)
-  # coeftest(e,vcn)
-  # coeftest(et,vcn)
-  # coef_test(e,vcov=vcovCR(e,d$gid,type="CR1"),test="naive-t") #t-test calculation must be a little bit different.
-  # e$vcov
-  # vcov(et)
-  # vcn
-  # su
-
-  #out
+  ##out
   return(vcn)
 }
 
+
+
+
+# https://rdrr.io/rforge/plm/src/R/plm.R
+# https://r-forge.r-project.org/scm/viewvc.php/pkg/R/pfunctions.R?view=markup&root=plm&sortdir=down
 
