@@ -1,0 +1,17 @@
+Package: clubTamal
+Type: Package
+Title: Clustered standard erros for panel data regressions
+Date: 2017-08-04
+Version: 0.1.0
+Author: Elías Cisneros <ec@elias-cisneros.de>
+Maintainer: Elías Cisneros <ec@elias-cisneros.de>
+Description: Clustering coefficient's standard erros of panel data models at any group level.
+    The creates a covariance matrix of the estimation coefficients for estimatats of the plm pakcage. 
+    The package currently only supports First Difference estimates (model="fd") and Fixed Effects estimates (model="within").
+License: GPL-2
+Imports: stats, lmtest, plm, sandwich, spd4testing
+Remotes: eliascis/spd4testing
+Depends: 
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
