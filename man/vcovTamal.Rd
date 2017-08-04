@@ -22,11 +22,11 @@ Clustering is based on Angist and Pischke (XXXX), XXXX and XXX resulting in Stat
 regression coefficients.
 }
 \details{
-For \cite{plm} objects estimated by a "within" model: \cr
-G is the number of groups. \cr
+Clustering \cite{plm} objects estimated by a "within" model: \cr
+Details forthcomming... \cr
 
-For \cite{plm} objects estimated by a "fd" model: \cr
-G is the number of groups. \cr
+Clustering \cite{plm} objects estimated by a "fd" model: \cr
+Details forthcomming... \cr
 }
 \note{
 The function uses the \code{estimate} and \code{data} to construct a transfomed data frame
@@ -35,9 +35,12 @@ covarinace matrix and correct for degrees of freedom and use a sandwich estimate
 }
 \examples{
 ##packages
+library(foreign)
 library(clubTamal)
 library(lmtest)
+library(plm)
 library(clubSandwich)
+library(spd4testing)
 
 ##data
 d<-spd4testing()
@@ -71,6 +74,27 @@ coeftest(e,v)
 ##clustering at group level with clubTamal
 v<-vcovTamal(estimate=e,data=d,groupvar="gid")
 coeftest(e,v)
+
+
+##clustering at group level with STATA (TM)
+#export data
+tdir<-tempdir()
+write.csv(d,file.path(tdir,"spd.csv"))
+#write stata file
+sink(file.path(tdir,"clusterStata.do"))
+cat(paste0('insheet using "',file.path("spd.csv"),'", clear'))
+cat("\\n")
+cat('xtset id year')
+cat("\\n")
+cat('xtreg y x i.year, fe')
+cat("\\n")
+cat('xtreg y x i.year, fe vce(cluster gid)')
+cat("\\n")
+cat('reg d.y d.x i.year')
+cat("\\n")
+cat('reg d.y d.x i.year, vce(cluster gid)')
+sink()
+## RUN Stata file
 
 }
 \references{

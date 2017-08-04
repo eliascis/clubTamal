@@ -9,7 +9,7 @@ Description: Clustering coefficient's standard erros of panel data models at any
     The creates a covariance matrix of the estimation coefficients for estimatats of the plm pakcage. 
     The package currently only supports First Difference estimates (model="fd") and Fixed Effects estimates (model="within").
 License: GPL-2
-Imports: stats, lmtest, plm, sandwich, spd4testing
+Imports: stats, lmtest, plm, sandwich, spd4testing, clubSandwich, foreign
 Remotes: eliascis/spd4testing
 Depends: 
 Encoding: UTF-8

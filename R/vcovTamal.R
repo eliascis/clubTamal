@@ -1,5 +1,34 @@
+#' @title sandwich in groups
+#' @description XXXX
+#' @param fm estimate of transformed data
+#' @param dfcw robust degrees of freedom
+#' @param cluster group cluster
+clx <- function(fm=et, dfcw=dfcw, cluster=gx){
+  # fm<-et
+  # dfcw<-dfcw
+  # cluster<-gx
+  #
+  M<-length(unique(cluster))
+  N<-length(cluster)
+  dfc<-(M/(M-1))*((N-1)/(N-fm$rank))
+  u<-apply(
+    estfun(fm),
+    2,
+    function(x) {
+      tapply(x, cluster, sum)
+    }
+  )
+  # meat<-crossprod(u)/N
+  # sx <- summary.lm(fm)
+  # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
+  # vcovCL<- dfc*1/N*bread%*%meat%*%bread
+  vcovCL<- dfc*sandwich(fm, meat=crossprod(u)/N)*dfcw
+  # coeftest(fm, vcovCL)
+  return(vcovCL)
+}
+
+
 #' @title Group clustering of panel data esitmates
-#'
 #' @description vcovTamal, creates a robust covariance variance matrix clustered at group level for \code{lm} objects.
 #' Clustering is based on Angist and Pischke (XXXX), XXXX and XXX resulting in Stata(TM) like standard errors of
 #' regression coefficients.
@@ -7,11 +36,11 @@
 #' @param data the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object
 #' @param groupvar a string indicating a column in \code{data} to indexes the group structure.
 #' @details
-#' For \cite{plm} objects estimated by a "within" model: \cr
-#' G is the number of groups. \cr
+#' Clustering \cite{plm} objects estimated by a "within" model: \cr
+#' Details forthcomming... \cr
 #' @details
-#' For \cite{plm} objects estimated by a "fd" model: \cr
-#' G is the number of groups. \cr
+#' Clustering \cite{plm} objects estimated by a "fd" model: \cr
+#' Details forthcomming... \cr
 #' @return A matrix containing the covariance matrix estimate
 #' @author Elías Cisneros <ec@elias-cisneros.de>
 #' @example man/eg.vcovTamal.R
@@ -34,61 +63,6 @@ vcovTamal<-function(
   data,
   groupvar
 ){
-  # estimate=e
-  # data=d
-  # groupvar="gid"
-  # traindata=T
-
-  # estimate=elist[[1]]
-  # data=spd
-  # groupvar="municip_geocode_id"
-  # traindata=F
-
-  ##needed packages
-  # require(plyr)
-  # library(sandwich)
-  # library(lmtest)
-  # library(clubSandwich)
-
-  ##testdata
-  # if( traindata==T) {
-  #   # model="fd"
-  #   model="within"
-  #   ##testdata
-  #   #data structure
-  #   N<-10 #ganze zahl
-  #   G<-2
-  #   M<-5
-  #   d<-data.frame(
-  #     id=rep(1:N,each=M),
-  #     year=rep(1:M,N)+2000,
-  #     gid=rep(1:G,each=M*(N/2))
-  #   )
-  #   #explanatory variable
-  #   d[,"e"]<-rnorm(N*M,0,1)
-  #   d[,"x"]=rnorm(N*M,0,1)
-  #   d[,"z"]<-1
-  #   d[,"u"]=2*(d[,"x"]+rnorm(N*M,0,10)) + 3*(d[,"e"] + rnorm(N*M,0,10))
-  #   #outcome
-  #   d[,"y"] = 2 * d[,"x"] + 5*d[,"u"] + d[,"e"]
-  #   #panel data frame
-  #   # d<-pdata.frame(d,index=c("id","year"))
-  #   #missing obs
-  #   d[d$id==3,"x"]<-NA
-  #
-  #   ##estimate
-  #   #formula
-  #   f<- pFormula(y ~ x + z+ factor(year)*factor(gid))
-  #   f<- pFormula(y ~ x + z+ factor(year))
-  #   f
-  #   #fixed effects or first difffernce estimation
-  #   e<-plm(f,data=d,model=model,index=c("id","year"))
-  #   summary(e)
-  #
-  #   estimate<-e
-  #   data<-d
-  #   # write.csv(d,file.path("H:/kairos/cloudmind/research_supplements/programming/R/functions","testdata.csv"),na=".")
-  # }
 
   #setup
   e<-estimate
@@ -96,6 +70,12 @@ vcovTamal<-function(
   vc<-e$vcov
   formula<-e$formula
   model<-e$args$model
+
+  #restricitons
+  if ((model %in% c("fd","within"))!=T){
+    stop('vcovTamal only supports for plm models c("fd","within")')
+  }
+
 
   #index
   pindex<-names(attributes(e$model)$index)
@@ -154,13 +134,15 @@ vcovTamal<-function(
   ##new estimation on transformed data
   if (model=="fd"){
     ft<-paste(names(mt)[1], "~ ", paste(names(mt)[-1],collapse="+"))
-  } else {
+  }
+  if (model=="within") {
     ft<-paste(names(mt)[1], "~ 0+", paste(names(mt)[-1],collapse="+"))
   }
   et<-lm(ft,mt)
   if (model=="fd"){
     names(et$coefficients)<-c("(intercept)",coefnames)
-  } else {
+  }
+  if (model=="within"){
     names(et$coefficients)<-coefnames
   }
 
@@ -174,47 +156,27 @@ vcovTamal<-function(
 
   ##cluster
   #degrees of freedom (robust)
-  dfcw<-1
   M<-length(unique(gx))
   N<-length(gx)
   K<-et$rank
+  if (model=="fd"){
+    dfcw <- 1
+  }
   if (model=="within"){
-    dfcw<- et$df / (et$df - (M-1))  # dfcw<- (N-K)/( (N-K)-(M-1) )
+    dfcw <- et$df / (et$df - (M-1))  # dfcw<- (N-K)/( (N-K)-(M-1) )
   }
   # dfc <- (M/(M-1)) * ((N-1)/(N-K))
 
-  clx <- function(fm=et, dfcw=dfcw, cluster=gx){
-    # fm<-et
-    # dfcw<-dfcw
-    # cluster<-gx
-    #
-    M<-length(unique(cluster))
-    N<-length(cluster)
-    dfc<-(M/(M-1))*((N-1)/(N-fm$rank))
-    u<-apply(
-      estfun(fm),
-      2,
-      function(x) {
-        tapply(x, cluster, sum)
-      }
-    )
-    # meat<-crossprod(u)/N
-    # sx <- summary.lm(fm)
-    # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
-    # vcovCL<- dfc*1/N*bread%*%meat%*%bread
-    vcovCL<- dfc*sandwich(fm, meat=crossprod(u)/N)*dfcw
-    # coeftest(fm, vcovCL)
-    return(vcovCL)
-  }
+  ## XXXX
   vcn<-clx(et, dfcw, gx)
 
   ##compare estimates
-  summary(e)
-  summary(et)
-  coeftest(e)
-  coeftest(et)
-  coeftest(e,vcn)
-  coeftest(et,vcn)
+  # summary(e)
+  # summary(et)
+  # coeftest(e)
+  # coeftest(et)
+  # coeftest(e,vcn)
+  # coeftest(et,vcn)
   # coef_test(e,vcov=vcovCR(e,d$gid,type="CR1"),test="naive-t") #t-test calculation must be a little bit different.
   # e$vcov
   # vcov(et)
