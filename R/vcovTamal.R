@@ -4,7 +4,7 @@
 #' Clustering is based on Angist and Pischke (XXXX), XXXX and XXX resulting in Stata(TM) like standard errors of
 #' regression coefficients.
 #' @param estimate an object of class \code{"plm"}.
-#' @param data the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object
+#' @param data the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.
 #' @param groupvar a string indicating a column in \code{data} to indexes the group structure.
 #' @details
 #' Clustering \cite{plm} objects estimated by a "within" model: \cr
