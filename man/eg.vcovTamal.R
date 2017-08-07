@@ -16,7 +16,7 @@ d
 ##formula
 f<- formula(y ~ x + factor(year))
 
-##standard estiatmion
+##standard estimation
 e<-plm(formula=f,data=d,model="fd")
 summary(e)
 e<-plm(formula=f,data=d,model="within")

@@ -1,9 +1,8 @@
 #' @title Group clustering of panel data esitmates
-#'
 #' @description vcovTamal, creates a robust covariance variance matrix clustered at group level for \code{lm} objects.
-#' Clustering is based on Angist and Pischke (XXXX), XXXX and XXX resulting in Stata(TM) like standard errors of
+#' Clustering is based on Angist and Pischke (2009) resulting in Stata(TM) like standard errors of
 #' regression coefficients.
-#' @param estimate an object of class \code{"plm"}.
+#' @param estimate an object of class \code{"plm"} estimated with by one of the methods \code{within}, \code{fd}.
 #' @param data the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.
 #' @param groupvar a string indicating a column in \code{data} to indexes the group structure.
 #' @details
@@ -15,7 +14,7 @@
 #' @return A matrix containing the covariance matrix estimate
 #' @author Elías Cisneros <ec@elias-cisneros.de>
 #' @example man/eg.vcovTamal.R
-#' @references Angist and Pischke (XXXX)
+#' @references Angrist, J. D. & Pischke, J.-S. Mostly harmless econometrics: An empiricist's companion Princeton university press, 2009
 #' @importFrom stats lm
 #' @importFrom stats model.frame
 #' @importFrom stats model.matrix
@@ -35,6 +34,10 @@ vcovTamal<-function(
   groupvar
 ){
 
+  # estimate<-d
+  # data<-d
+  # groupvar<-"gid"
+
   #setup
   e<-estimate
   d<-data
@@ -44,9 +47,8 @@ vcovTamal<-function(
 
   #restricitons
   if ((model %in% c("fd","within"))!=T){
-    stop('vcovTamal only supports for plm models c("fd","within")')
+    stop('vcovTamal only applys to plm models of c("fd","within")')
   }
-
 
   #index
   pindex<-names(attributes(e$model)$index)

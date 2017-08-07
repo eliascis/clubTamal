@@ -1,13 +1,14 @@
 Package: clubTamal
 Type: Package
-Title: Clustered standard erros for panel data regressions
+Title: Clustered covariance matrix for panel data estimations
 Date: 2017-08-04
 Version: 0.1.0
 Author: Elías Cisneros <ec@elias-cisneros.de>
 Maintainer: Elías Cisneros <ec@elias-cisneros.de>
-Description: Clustering coefficient's standard erros of panel data models at any group level.
-    The creates a covariance matrix of the estimation coefficients for estimatats of the plm pakcage. 
-    The package currently only supports First Difference estimates (model="fd") and Fixed Effects estimates (model="within").
+Description: Clustered covariance matrix estimation for panel data models estimated with \code{plm}. 
+    Package runs for First Difference estimates (\code{model="fd"}) and Fixed Effects estimates (\code{model="within"}). 
+    Groups of clustered can be defined at higher levels then the individual observations. 
+    E.g. for estimations on yearly houshold data it is possible to cluster at the state level. 
 License: GPL-2
 Imports: stats, lmtest, plm, sandwich, spd4testing, clubSandwich, foreign
 Remotes: eliascis/spd4testing

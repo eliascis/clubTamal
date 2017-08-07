@@ -9,7 +9,7 @@ vcovTamal(estimate, data, groupvar)
 \arguments{
 \item{estimate}{an object of class \code{"plm"}.}
 
-\item{data}{the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object}
+\item{data}{the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.}
 
 \item{groupvar}{a string indicating a column in \code{data} to indexes the group structure.}
 }
@@ -18,7 +18,7 @@ A matrix containing the covariance matrix estimate
 }
 \description{
 vcovTamal, creates a robust covariance variance matrix clustered at group level for \code{lm} objects.
-Clustering is based on Angist and Pischke (XXXX), XXXX and XXX resulting in Stata(TM) like standard errors of
+Clustering is based on Angist and Pischke (2009) resulting in Stata(TM) like standard errors of
 regression coefficients.
 }
 \details{
@@ -98,7 +98,7 @@ sink()
 
 }
 \references{
-Angist and Pischke (XXXX)
+Angrist, J. D. & Pischke, J.-S. Mostly harmless econometrics: An empiricist's companion Princeton university press, 2009
 }
 \author{
 Elías Cisneros <ec@elias-cisneros.de>
