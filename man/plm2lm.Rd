@@ -67,6 +67,11 @@ coeftest(e,v)
 v<-vcovTamal(estimate=e,data=d,groupvar="gid")
 coeftest(e,v)
 
+##clustering at group level with clubTamal
+\dontrun{
+v<-vcovTamal(estimate=e,data=d,groupvar="gid",byhand=T)
+coeftest(e,v)
+}
 
 ##clustering at group level with STATA (TM)
 #export data

@@ -3,9 +3,11 @@
 #' Clustering is based on Angist and Pischke (2009) resulting in Stata(TM) like standard errors of
 #' regression coefficients.
 #' @param estimate an object of class \code{"plm"} estimated with by one of the methods \code{within}, \code{fd}.
-#' @param data the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.
+#' @param data a data.frame object, that must be the data.frame used to create \code{estimate} object.
+#' Can be a data.frame or a pdata.frame object.
 #' @param groupvar a string indicating a column in \code{data} to indexes the group structure.
-#' @param byhand logical, if TRUE, the clustered covariance matrix is calculated by formulas without using the \code{multiwayvcov} package.
+#' @param byhand logical, if TRUE, the clustered covariance matrix is calculated by formulas
+#' without using the \code{multiwayvcov} package. This method is outdated.
 #' @details
 #' See package vignette.
 #' @return A matrix containing the covariance matrix estimate
@@ -36,102 +38,45 @@ vcovTamal<-function(
   byhand=F
 ){
 
-  # estimate<-e
-  # data<-d
-  # groupvar<-"gid"
+  #example
+  # data<-spd4testing(missingX=T)
+  # data<-pdata.frame(data)
+  # f<-formula(y~x+factor(year))
+  # estimate<-plm(f,data,method="within")
 
   #setup
-  e<-estimate
-  d<-data
-  vc<-e$vcov
-  formula<-e$formula
-  model<-e$args$model
+  model<- estimate$args$model
 
-  #restricitons
+  ##restricitons
   if ((model %in% c("fd","within"))!=T){
     stop('vcovTamal only applys to plm models of c("fd","within")')
   }
 
-  #index
-  pindex<-names(attributes(e$model)$index)
+  ##convert plm to lm
+  et<-plm2lm(estimate=estimate,reestimate=T)
 
-  #reduced data
-  # x<-d[,c(pindex,as.character(formula[2]))]
-  x<-d[,c(pindex,groupvar)]
-  rownames(x)<-1:nrow(x)
-  x$rowid<-as.integer(rownames(x))
-  head(x)
-  rd<-x
+  ##group index
+  if (is.numeric(groupvar)==T){
+    stop("groupvar is numeric. not yet implmeted")
+  }
+  if (is.character(groupvar)==T & is.data.frame(data)==T){
+    x<-data
+    x$rowid<-rownames(x)
+    x<-x[x$rowid %in% rownames(et$model),c("rowid",groupvar)]
+    x<-x[,groupvar]
+    x<-as.integer(x)
+    gx<-x
+  }
 
-  #model frame
-  if (class(d)[1]=="pdata.frame"){
-    d.pdata.frame<-d
-  }
-  if (class(d)[1]=="data.frame"){
-    d.pdata.frame<-pdata.frame(d)
-  }
-  x<-model.frame(formula,data=d.pdata.frame)
-  # x$rowid<-as.integer(rownames(x))
-  # head(x)
-  mf<-x
-
-  #model response
-  x<-pmodel.response(formula,mf,model)
-  x<-data.frame(x)
-  names(x)<-names(mf)[1]
-  x$rowid<-as.integer(rownames(x))
-  mr<-x
-
-  #model matrix - transformed data of explanatory variables
-  x<-model.matrix(formula,mf,model)
-  n<-names(e$aliased[e$aliased==F])
-  i<-match(n,colnames(x))
-  i<-i[!is.na(i)] #avoid omited constant variables in new data set
-  x<-x[,i]
-  n<-colnames(x)
-  x<-data.frame(x)
-  names(x)<-n
-  x$rowid<-as.integer(rownames(x))
-  mx<-x
-
-  #transformed data
-  x<-merge(mr,mx,by="rowid",all.x=T)
-  i<-match("rowid",names(x))
-  i<-c(i,match("(intercept)",names(x)))
-  i<-i[!is.na(i)]
-  if (length(i)>0){
-    x<-x[,-i]
-  }
-  coefnames<-names(x)[-1]
-  x<-data.frame(x) #confert names to be usable in regression
-  mt<-x
-
-  ##new estimation on transformed data
-  #formula
-  if (model=="fd"){
-    ft<-paste(names(mt)[1], "~ ", paste(names(mt)[-1],collapse="+"))
-  }
-  if (model=="within") {
-    ft<-paste(names(mt)[1], "~ 0+", paste(names(mt)[-1],collapse="+"))
-  }
-  #estimation
-  et<-lm(ft,mt)
-  #estimation names correction
-  if (model=="fd"){
-    names(et$coefficients)<-c("(intercept)",coefnames)
-  }
+  ##cluster with multiwayvcov
   if (model=="within"){
-    names(et$coefficients)<-coefnames
+    vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=T)
+  }
+  if (model=="fd"){
+    vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=F)
   }
 
-  #group index
-  x<-rd
-  x<-x[x$rowid %in% mx$rowid,c("rowid",pindex,groupvar)]
-  x<-x[,groupvar]
-  gx<-x
-
-
-  ##cluster by hand
+  ##cluster by hand (outdated)
   if (byhand==T){
     ##cluster
     #weighting of covaraince matrix
@@ -162,14 +107,6 @@ vcovTamal<-function(
     # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
     # vcovCL<- dfc*1/N*bread%*%meat%*%bread
     vcovCL<- dfc * sandwich(x=et, meat.=crossprod(u)/N) * dfcw
-  }
-
-  ##cluster with multiwaycov
-  if (model=="within"){
-    vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=T)
-  }
-  if (model=="fd"){
-    vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=F)
   }
 
   ##test

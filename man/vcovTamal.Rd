@@ -9,11 +9,13 @@ vcovTamal(estimate, data, groupvar, byhand = F)
 \arguments{
 \item{estimate}{an object of class \code{"plm"} estimated with by one of the methods \code{within}, \code{fd}.}
 
-\item{data}{the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.}
+\item{data}{a data.frame object, that must be the data.frame used to create \code{estimate} object.
+Can be a data.frame or a pdata.frame object.}
 
 \item{groupvar}{a string indicating a column in \code{data} to indexes the group structure.}
 
-\item{byhand}{logical, if TRUE, the clustered covariance matrix is calculated by formulas without using the \code{multiwayvcov} package.}
+\item{byhand}{logical, if TRUE, the clustered covariance matrix is calculated by formulas
+without using the \code{multiwayvcov} package. This method is outdated.}
 }
 \value{
 A matrix containing the covariance matrix estimate
@@ -71,6 +73,11 @@ coeftest(e,v)
 v<-vcovTamal(estimate=e,data=d,groupvar="gid")
 coeftest(e,v)
 
+##clustering at group level with clubTamal
+\dontrun{
+v<-vcovTamal(estimate=e,data=d,groupvar="gid",byhand=T)
+coeftest(e,v)
+}
 
 ##clustering at group level with STATA (TM)
 #export data
