@@ -4,7 +4,7 @@
 \alias{vcovTamal}
 \title{Group clustering of panel data esitmates}
 \usage{
-vcovTamal(estimate, data, groupvar)
+vcovTamal(estimate, data, groupvar, byhand = F)
 }
 \arguments{
 \item{estimate}{an object of class \code{"plm"} estimated with by one of the methods \code{within}, \code{fd}.}
@@ -12,6 +12,8 @@ vcovTamal(estimate, data, groupvar)
 \item{data}{the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.}
 
 \item{groupvar}{a string indicating a column in \code{data} to indexes the group structure.}
+
+\item{byhand}{logical, if TRUE, the clustered covariance matrix is calculated by formulas without using the \code{multiwayvcov} package.}
 }
 \value{
 A matrix containing the covariance matrix estimate
@@ -37,13 +39,11 @@ library(lmtest)
 library(plm)
 library(clubSandwich)
 library(spd4testing)
+library(multiwayvcov)
 
 ##data
 d<-spd4testing()
 d
-
-#manipulate data
-# d<-pdata.frame(d)
 
 ##formula
 f<- formula(y ~ x + factor(year))
@@ -91,6 +91,7 @@ cat("\\n")
 cat('reg d.y d.x i.year, vce(cluster gid)')
 sink()
 ## RUN Stata file
+
 
 }
 \references{

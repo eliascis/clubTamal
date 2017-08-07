@@ -10,7 +10,7 @@ Description: Clustered covariance matrix estimation for panel data models estima
     Groups of clustered can be defined at higher levels then the individual observations. 
     E.g. for estimations on yearly houshold data it is possible to cluster at the state level. 
 License: GPL-2
-Imports: stats, lmtest, plm, sandwich, spd4testing, clubSandwich, foreign
+Imports: stats, lmtest, plm, sandwich, spd4testing, clubSandwich, foreign, multiwayvcov
 Remotes: eliascis/spd4testing
 Depends: 
 Encoding: UTF-8

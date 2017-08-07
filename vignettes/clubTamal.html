@@ -36,24 +36,30 @@
 
 
 
-<p>Clustered covariance matrix estimation for panel data models estimated with <code>plm</code>. Package runs for First Difference estimates (<code>model=&quot;fd&quot;</code>) and Fixed Effects estimates (<code>model=&quot;within&quot;</code>). Groups of clustered can be defined at higher levels then the individual observations. E.g. for estimations on yearly houshold data it is possible to cluster at the state level.</p>
-<div id="note" class="section level2">
-<h2>Note</h2>
-<p>The function uses the <code>estimate</code> argument and the <code>data</code> argument to construct a transfomed data frame - first differenced or time-demeaned. The esitmate is then re-estimated by OLS with <code>lm</code> in order to extract the covarinace matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.</p>
-</div>
+<p>The package <code>clubTamal</code> creates clustered covariance matrices for panel data models estimated with <code>plm</code>. Cluster groups can be defined at higher levels than the individual observations. E.g. for estimations on yearly houshold data it is possible to cluster at the state level. Package runs for First Difference estimates (<code>model=&quot;fd&quot;</code>) and Fixed Effects estimates (<code>model=&quot;within&quot;</code>).</p>
 <div id="clustering" class="section level2">
 <h2>Clustering</h2>
 <p>N - Number of observations</p>
 <p>M - Number of cluster</p>
 <p>K - Number of regressors (rank)</p>
-<div id="clustering-first-difference-estimations" class="section level3">
-<h3>Clustering First difference estimations</h3>
+<div id="clustering-first-difference-fd-estimations" class="section level3">
+<h3>Clustering First Difference (FD) estimations</h3>
 <p><span class="math display">\[(X'X)^{-1} \, \sum_{j=1}^M u_{M}'u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}\]</span> where <span class="math inline">\(u = X_{j} e_{j}\)</span>.</p>
 </div>
-<div id="clustering-fixed-effects-estimations" class="section level3">
-<h3>Clustering Fixed effects estimations</h3>
+<div id="clustering-fixed-effects-fe-estimations" class="section level3">
+<h3>Clustering Fixed Effects (FE) estimations</h3>
 <p><span class="math display">\[\frac{(N-K)}{(N-K)-(M-1)} \cdot (X'X)^{-1} \, \sum_{j=1}^M u_{M}'u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}\]</span> where <span class="math inline">\(u = X_{j} e_{j}\)</span>.</p>
 </div>
+</div>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
+<pre><code>library(devtools)
+install_github(eliascis/clubTamal)
+library(clubTamal)</code></pre>
+</div>
+<div id="note" class="section level2">
+<h2>Note</h2>
+<p>The function uses the <code>estimate</code> argument and the <code>data</code> argument to construct a transfomed data frame - first differenced or time-demeaned. The esitmate is then re-estimated by OLS with <code>lm</code> in order to extract the covarinace matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.</p>
 </div>
 <div id="examples" class="section level2">
 <h2>Examples</h2>

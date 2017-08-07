@@ -5,6 +5,7 @@
 #' @param estimate an object of class \code{"plm"} estimated with by one of the methods \code{within}, \code{fd}.
 #' @param data the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.
 #' @param groupvar a string indicating a column in \code{data} to indexes the group structure.
+#' @param byhand logical, if TRUE, the clustered covariance matrix is calculated by formulas without using the \code{multiwayvcov} package.
 #' @details
 #' See package vignette.
 #' @return A matrix containing the covariance matrix estimate
@@ -21,6 +22,7 @@
 #' @importFrom lmtest coeftest
 #' @import plm
 #' @import sandwich
+#' @import multiwayvcov
 #' @note The function uses the \code{estimate} and \code{data} to construct a transfomed data frame
 #' - first differenced or time-demeaned. The esitmate is then re-estimated by OLS with \code{lm} in order to extract the
 #' covarinace matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.
@@ -30,7 +32,8 @@
 vcovTamal<-function(
   estimate,
   data,
-  groupvar
+  groupvar,
+  byhand=F
 ){
 
   # estimate<-e
@@ -104,13 +107,16 @@ vcovTamal<-function(
   mt<-x
 
   ##new estimation on transformed data
+  #formula
   if (model=="fd"){
     ft<-paste(names(mt)[1], "~ ", paste(names(mt)[-1],collapse="+"))
   }
   if (model=="within") {
     ft<-paste(names(mt)[1], "~ 0+", paste(names(mt)[-1],collapse="+"))
   }
+  #estimation
   et<-lm(ft,mt)
+  #estimation names correction
   if (model=="fd"){
     names(et$coefficients)<-c("(intercept)",coefnames)
   }
@@ -121,41 +127,50 @@ vcovTamal<-function(
   #group index
   x<-rd
   x<-x[x$rowid %in% mx$rowid,c("rowid",pindex,groupvar)]
-  head(x)
-  nrow(x)
   x<-x[,groupvar]
   gx<-x
 
-  ##cluster
-  #weighting of covaraince matrix
-  M<-length(unique(gx))
-  N<-length(gx)
-  K<-et$rank
-  if (model=="fd"){
-    dfcw <- 1
-  }
-  if (model=="within"){
-    dfcw <- et$df / (et$df - (M-1))  # (N-K)/( (N-K)-(M-1) )
-  }
 
-  #degree of freedom correction
-  dfc<-(M/(M-1))*((N-1)/(N-K)) # (M/(M-1)) * ((N-1)/(N-K))
-
-  #group residuals uj = Xj * ej
-  u<-apply(
-    estfun(et),
-    2,
-    function(x) {
-      tapply(x, gx, sum)
+  ##cluster by hand
+  if (byhand==T){
+    ##cluster
+    #weighting of covaraince matrix
+    M<-length(unique(gx))
+    N<-length(gx)
+    K<-et$rank
+    if (model=="fd"){
+      dfcw <- 1
     }
-  )
+    if (model=="within"){
+      dfcw <- et$df / (et$df - (M-1))  # (N-K)/( (N-K)-(M-1) )
+    }
 
+    #degree of freedom correction
+    dfc<-(M/(M-1))*((N-1)/(N-K)) # (M/(M-1)) * ((N-1)/(N-K))
+
+    #group residuals uj = Xj * ej
+    u<-apply(
+      estfun(et),
+      2,
+      function(x) {
+        tapply(x, gx, sum)
+      }
+    )
     #sandwich estimator
-  # meat<-crossprod(u)/N
-  # sx <- summary.lm(et)
-  # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
-  # vcovCL<- dfc*1/N*bread%*%meat%*%bread
-  vcovCL<- dfc * sandwich(x=et, meat.=crossprod(u)/N) * dfcw
+    # meat<-crossprod(u)/N
+    # sx <- summary.lm(et)
+    # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
+    # vcovCL<- dfc*1/N*bread%*%meat%*%bread
+    vcovCL<- dfc * sandwich(x=et, meat.=crossprod(u)/N) * dfcw
+  }
+
+  ##cluster with multiwaycov
+  if (model=="within"){
+    vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=T)
+  }
+  if (model=="fd"){
+    vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=F)
+  }
 
   ##test
   # coeftest(et, vcovCL)
@@ -169,4 +184,4 @@ vcovTamal<-function(
 
 # https://rdrr.io/rforge/plm/src/R/plm.R
 # https://r-forge.r-project.org/scm/viewvc.php/pkg/R/pfunctions.R?view=markup&root=plm&sortdir=down
-# https://thetarzan.wordpress.com/2011/06/11/clustered-standard-errors-in-r/
+
