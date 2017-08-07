@@ -2,9 +2,9 @@ Package: clubTamal
 Type: Package
 Title: Clustered covariance matrix for panel data estimations
 Date: 2017-08-04
-Version: 0.1.0
-Author: Elías Cisneros <ec@elias-cisneros.de>
-Maintainer: Elías Cisneros <ec@elias-cisneros.de>
+Version: 0.1.1
+Author: El\'{i}as Cisneros <ec@elias-cisneros.de>
+Maintainer: El\{'}ias Cisneros <ec@elias-cisneros.de>
 Description: Clustered covariance matrix estimation for panel data models estimated with \code{plm}. 
     Package runs for First Difference estimates (\code{model="fd"}) and Fixed Effects estimates (\code{model="within"}). 
     Groups of clustered can be defined at higher levels then the individual observations. 
@@ -16,3 +16,6 @@ Depends:
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr

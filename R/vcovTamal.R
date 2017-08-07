@@ -6,15 +6,14 @@
 #' @param data the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.
 #' @param groupvar a string indicating a column in \code{data} to indexes the group structure.
 #' @details
-#' Clustering \cite{plm} objects estimated by a "within" model: \cr
-#' Details forthcomming... \cr
-#' @details
-#' Clustering \cite{plm} objects estimated by a "fd" model: \cr
-#' Details forthcomming... \cr
+#' See package vignette.
 #' @return A matrix containing the covariance matrix estimate
 #' @author Elías Cisneros <ec@elias-cisneros.de>
 #' @example man/eg.vcovTamal.R
-#' @references Angrist, J. D. & Pischke, J.-S. Mostly harmless econometrics: An empiricist's companion Princeton university press, 2009
+#' @references
+#' Angrist, J. D. & Pischke, J.-S. Mostly harmless econometrics: An empiricist's companion Princeton university press, 2009
+#' Arai, M. Cluster-robust standard errors using R, 2015.
+#' See also: https://thetarzan.wordpress.com/2011/06/11/clustered-standard-errors-in-r/.
 #' @importFrom stats lm
 #' @importFrom stats model.frame
 #' @importFrom stats model.matrix
@@ -34,7 +33,7 @@ vcovTamal<-function(
   groupvar
 ){
 
-  # estimate<-d
+  # estimate<-e
   # data<-d
   # groupvar<-"gid"
 
@@ -128,7 +127,7 @@ vcovTamal<-function(
   gx<-x
 
   ##cluster
-  #degrees of freedom (robust)
+  #weighting of covaraince matrix
   M<-length(unique(gx))
   N<-length(gx)
   K<-et$rank
@@ -136,36 +135,33 @@ vcovTamal<-function(
     dfcw <- 1
   }
   if (model=="within"){
-    dfcw <- et$df / (et$df - (M-1))  # dfcw<- (N-K)/( (N-K)-(M-1) )
+    dfcw <- et$df / (et$df - (M-1))  # (N-K)/( (N-K)-(M-1) )
   }
 
-  clx <- function(fm=et, dfcw=dfcw, cluster=gx){
-    # fm<-et
-    # dfcw<-dfcw
-    # cluster<-gx
+  #degree of freedom correction
+  dfc<-(M/(M-1))*((N-1)/(N-K)) # (M/(M-1)) * ((N-1)/(N-K))
 
-    M<-length(unique(cluster))
-    N<-length(cluster)
-    dfc<-(M/(M-1))*((N-1)/(N-fm$rank)) # dfc <- (M/(M-1)) * ((N-1)/(N-K))
-    u<-apply(
-      estfun(fm),
-      2,
-      function(x) {
-        tapply(x, cluster, sum)
-      }
-    )
-    # meat<-crossprod(u)/N
-    # sx <- summary.lm(fm)
-    # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
-    # vcovCL<- dfc*1/N*bread%*%meat%*%bread
-    vcovCL<- dfc * sandwich(x=fm, meat.=crossprod(u)/N) * dfcw
-    # coeftest(fm, vcovCL)
-    return(vcovCL)
-  }
-  vcn<-clx(et, dfcw, gx)
+  #group residuals uj = Xj * ej
+  u<-apply(
+    estfun(et),
+    2,
+    function(x) {
+      tapply(x, gx, sum)
+    }
+  )
+
+    #sandwich estimator
+  # meat<-crossprod(u)/N
+  # sx <- summary.lm(et)
+  # bread<-sx$cov.unscaled * as.vector(sum(sx$df[1:2]))
+  # vcovCL<- dfc*1/N*bread%*%meat%*%bread
+  vcovCL<- dfc * sandwich(x=et, meat.=crossprod(u)/N) * dfcw
+
+  ##test
+  # coeftest(et, vcovCL)
 
   ##out
-  return(vcn)
+  return(vcovCL)
 }
 
 
@@ -173,4 +169,4 @@ vcovTamal<-function(
 
 # https://rdrr.io/rforge/plm/src/R/plm.R
 # https://r-forge.r-project.org/scm/viewvc.php/pkg/R/pfunctions.R?view=markup&root=plm&sortdir=down
-
+# https://thetarzan.wordpress.com/2011/06/11/clustered-standard-errors-in-r/

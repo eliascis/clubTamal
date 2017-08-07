@@ -7,7 +7,7 @@
 vcovTamal(estimate, data, groupvar)
 }
 \arguments{
-\item{estimate}{an object of class \code{"plm"}.}
+\item{estimate}{an object of class \code{"plm"} estimated with by one of the methods \code{within}, \code{fd}.}
 
 \item{data}{the data frame object used to create \code{estimate} object. Can be a data.frame or a pdata.frame object.}
 
@@ -22,11 +22,7 @@ Clustering is based on Angist and Pischke (2009) resulting in Stata(TM) like sta
 regression coefficients.
 }
 \details{
-Clustering \cite{plm} objects estimated by a "within" model: \cr
-Details forthcomming... \cr
-
-Clustering \cite{plm} objects estimated by a "fd" model: \cr
-Details forthcomming... \cr
+See package vignette.
 }
 \note{
 The function uses the \code{estimate} and \code{data} to construct a transfomed data frame
@@ -52,7 +48,7 @@ d
 ##formula
 f<- formula(y ~ x + factor(year))
 
-##standard estiatmion
+##standard estimation
 e<-plm(formula=f,data=d,model="fd")
 summary(e)
 e<-plm(formula=f,data=d,model="within")
@@ -99,6 +95,8 @@ sink()
 }
 \references{
 Angrist, J. D. & Pischke, J.-S. Mostly harmless econometrics: An empiricist's companion Princeton university press, 2009
+Arai, M. Cluster-robust standard errors using R, 2015.
+See also: https://thetarzan.wordpress.com/2011/06/11/clustered-standard-errors-in-r/.
 }
 \author{
 Elías Cisneros <ec@elias-cisneros.de>

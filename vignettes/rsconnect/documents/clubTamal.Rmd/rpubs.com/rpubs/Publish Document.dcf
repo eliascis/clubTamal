@@ -1,0 +1,8 @@
+name: Publish Document
+title:
+account: rpubs
+server: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/297574/711c3b683a114ffe9e3494569401c5cb
+bundleId: https://api.rpubs.com/api/v1/document/297574/711c3b683a114ffe9e3494569401c5cb
+url: http://rpubs.com/eliascis/297574
+when: 1502127056.92237
