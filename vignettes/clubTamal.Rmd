@@ -4,7 +4,7 @@ author: "Elías Cisneros"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{"Clustered covariance matrix for panel data estimations"}
+  %\VignetteIndexEntry{Clustered covariance matrix for panel data estimations}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -21,12 +21,12 @@ K - Number of regressors (rank)
 
 ### Clustering First Difference (FD) estimations
 
-$$(X'X)^{-1} \, \sum_{j=1}^M u_{M}'u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}$$
+$$(X'X)^{-1} \, \sum_{j=1}^M u'_{M} u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}$$
 where $u = X_{j} e_{j}$.
 
-### Clustering Fixed Effects (FE) estimations
+## Clustering Fixed Effects (FE) estimations
 
-$$\frac{(N-K)}{(N-K)-(M-1)} \cdot (X'X)^{-1} \, \sum_{j=1}^M u_{M}'u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}$$
+$$\frac{(N-K)}{(N-K)-(M-1)} \cdot (X'X)^{-1} \, \sum_{j=1}^M u'_{M} u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}$$
 where $u = X_{j} e_{j}$.
 
 ##Installation
@@ -59,9 +59,6 @@ library(spd4testing)
 ##data
 d<-spd4testing()
 d
-
-#manipulate data
-# d<-pdata.frame(d)
 
 ##formula
 f<- formula(y ~ x + factor(year))
@@ -112,14 +109,9 @@ sink()
 ``` 
 
 
-
-
-
-
-
 ##Citation
 Elias Cisneros (2017). clubTamal: Clustered covariance matrix for panel
-  data estimations. R package version 0.1.1.
+  data estimations. R package version 0.1.2.
 
 ## Links and References
 Angrist, J. D. & Pischke, J.-S. Mostly harmless econometrics: An empiricist's companion Princeton university press, 2009

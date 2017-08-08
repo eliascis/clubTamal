@@ -8,9 +8,8 @@
 #' @details
 #' estimate - The \code{plm} object estimated by one of the methods \code{within}, \code{fd}.
 #' reestimate - If FALSE, an error displays - A conversion without reestimation is currently not implmented.
-#' @return A matrix containing the covariance matrix estimate
+#' @return A \code{lm} object
 #' @author Elías Cisneros <ec@elias-cisneros.de>
-#' @example man/eg.vcovTamal.R
 #' @importFrom stats lm
 #' @importFrom stats model.frame
 #' @importFrom stats model.matrix
