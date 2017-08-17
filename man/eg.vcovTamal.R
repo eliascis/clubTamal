@@ -29,6 +29,7 @@ v<-vcovHC(e,type="HC1",cluster="group",tol=1*10^-20 )
 coeftest(e,v)
 
 ##clustering at group level with clubSandwich-package
+##only for Fixed Effects regressions
 v<-vcovCR(e,d$gid,type="CR1")
 coef_test(e,vcov=v,test="naive-t")
 coeftest(e,v)
@@ -37,7 +38,7 @@ coeftest(e,v)
 v<-vcovTamal(estimate=e,data=d,groupvar="gid")
 coeftest(e,v)
 
-##clustering at group level with clubTamal
+##clustering with clubTamal but without using the multivcov package
 \dontrun{
 v<-vcovTamal(estimate=e,data=d,groupvar="gid",byhand=T)
 coeftest(e,v)
