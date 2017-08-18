@@ -44,12 +44,12 @@
 <p>K - Number of regressors (rank)</p>
 <div id="clustering-first-difference-fd-estimations" class="section level3">
 <h3>Clustering First Difference (FD) estimations</h3>
-<p><span class="math display">\[(X'X)^{-1} \, \sum_{j=1}^M u'_{M} u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}\]</span> where <span class="math inline">\(u = X_{j} e_{j}\)</span>.</p>
+<p><span class="math display">\[(X'X)^{-1} \, \sum_{j=1}^M u_{M}'u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}\]</span> where <span class="math inline">\(u = X_{j} e_{j}\)</span>.</p>
 </div>
+<div id="clustering-fixed-effects-fe-estimations" class="section level3">
+<h3>Clustering Fixed Effects (FE) estimations</h3>
+<p><span class="math display">\[\frac{(N-K)}{(N-K)-(M-1)} \cdot (X'X)^{-1} \, \sum_{j=1}^M u_{M}'u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}\]</span> where <span class="math inline">\(u = X_{j} e_{j}\)</span>.</p>
 </div>
-<div id="clustering-fixed-effects-fe-estimations" class="section level2">
-<h2>Clustering Fixed Effects (FE) estimations</h2>
-<p><span class="math display">\[\frac{(N-K)}{(N-K)-(M-1)} \cdot (X'X)^{-1} \, \sum_{j=1}^M u'_{M} u_{M} \, (X'X)^{-1} \cdot \frac{M}{M-1} \frac{N-1}{N-K}\]</span> where <span class="math inline">\(u = X_{j} e_{j}\)</span>.</p>
 </div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
@@ -75,6 +75,9 @@ library(spd4testing)
 ##data
 d&lt;-spd4testing()
 d
+
+#manipulate data
+# d&lt;-pdata.frame(d)
 
 ##formula
 f&lt;- formula(y ~ x + factor(year))
@@ -125,7 +128,7 @@ sink()
 </div>
 <div id="citation" class="section level2">
 <h2>Citation</h2>
-<p>Elias Cisneros (2017). clubTamal: Clustered covariance matrix for panel data estimations. R package version 0.1.2.</p>
+<p>Elias Cisneros (2017). clubTamal: Clustered covariance matrix for panel data estimations. R package version 0.1.1.</p>
 </div>
 <div id="links-and-references" class="section level2">
 <h2>Links and References</h2>

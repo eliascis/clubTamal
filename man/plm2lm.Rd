@@ -12,7 +12,7 @@ plm2lm(estimate, reestimate = T)
 \item{reestimate}{logical, if TRUE the panel data model is reestimated with a linear regression (\code{lm}).}
 }
 \value{
-A \code{lm} object
+A matrix containing the covariance matrix estimate
 }
 \description{
 plm2lm, converts the a \code{plm} object to an \code{lm} object.
@@ -26,6 +26,74 @@ reestimate - If FALSE, an error displays - A conversion without reestimation is 
 }
 \note{
 Reestimation of results leads to an increase in processing requairemets.
+}
+\examples{
+##packages
+library(foreign)
+library(clubTamal)
+library(lmtest)
+library(plm)
+library(clubSandwich)
+library(spd4testing)
+library(multiwayvcov)
+
+##data
+d<-spd4testing()
+d
+
+##formula
+f<- formula(y ~ x + factor(year))
+
+##standard estimation
+e<-plm(formula=f,data=d,model="fd")
+summary(e)
+e<-plm(formula=f,data=d,model="within")
+summary(e)
+
+##clustering
+#no clustering
+v<-e$vcov
+coeftest(e)
+#clustering at id level with plm-package
+v<-vcovHC(e,type="HC1",cluster="group",tol=1*10^-20 )
+coeftest(e,v)
+
+##clustering at group level with clubSandwich-package
+v<-vcovCR(e,d$gid,type="CR1")
+coef_test(e,vcov=v,test="naive-t")
+coeftest(e,v)
+
+##clustering at group level with clubTamal
+v<-vcovTamal(estimate=e,data=d,groupvar="gid")
+coeftest(e,v)
+
+##clustering at group level with clubTamal
+\dontrun{
+v<-vcovTamal(estimate=e,data=d,groupvar="gid",byhand=T)
+coeftest(e,v)
+}
+
+##clustering at group level with STATA (TM)
+#export data
+tdir<-tempdir()
+write.csv(d,file.path(tdir,"spd.csv"))
+#write stata file
+sink(file.path(tdir,"clusterStata.do"))
+cat(paste0('insheet using "',file.path("spd.csv"),'", clear'))
+cat("\\n")
+cat('xtset id year')
+cat("\\n")
+cat('xtreg y x i.year, fe')
+cat("\\n")
+cat('xtreg y x i.year, fe vce(cluster gid)')
+cat("\\n")
+cat('reg d.y d.x i.year')
+cat("\\n")
+cat('reg d.y d.x i.year, vce(cluster gid)')
+sink()
+## RUN Stata file
+
+
 }
 \author{
 Elías Cisneros <ec@elias-cisneros.de>
