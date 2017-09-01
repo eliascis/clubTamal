@@ -48,8 +48,11 @@ vcovTamal<-function(
   model<- estimate$args$model
 
   ##restricitons
+  if (model %in% c("within")){
+    stop('better use the very fast and powerful lfe::felm')
+  }
   if ((model %in% c("fd","within"))!=T){
-    stop('vcovTamal only applys to plm models of c("fd","within")')
+    stop('vcovTamal only applys to plm models of c("fd")')
   }
 
   ##convert plm to lm
