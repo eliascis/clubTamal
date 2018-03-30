@@ -4,7 +4,8 @@
 \alias{panel.transform}
 \title{Transform Panel Data}
 \usage{
-panel.transform(formula, data, model = "within", index = c("id", "year"))
+panel.transform(formula, data, model = "within", index = c("id", "year"),
+  keep.vars = c("id", "year"))
 }
 \arguments{
 \item{formula}{a formula, indicating the covariates.}

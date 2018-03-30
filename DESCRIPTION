@@ -2,11 +2,7 @@ Package: clubTamal
 Type: Package
 Title: Clustered covariance matrix for panel data estimations
 Date: 2017-08-04
-<<<<<<< HEAD
-Version: 0.1.3
-=======
-Version: 0.1.1
->>>>>>> parent of 15feece... a few updates
+Version: 0.1.4
 Author: El\'{i}as Cisneros <ec@elias-cisneros.de>
 Maintainer: El\{'}ias Cisneros <ec@elias-cisneros.de>
 Description: Clustered covariance matrix estimation for panel data models estimated with \code{plm}. 

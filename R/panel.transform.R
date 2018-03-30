@@ -20,17 +20,19 @@ panel.transform<-function(
   formula,
   data,
   model="within",
-  index=c("id","year")
+  index=c("id","year"),
+  keep.vars=c("id","year")
 ){
   # formula<-y~x+factor(year)
-  # data<-spd4testing()
-  # model="within"
+  # data<-spd4testing(missingY=T,missingX=T)
+  # model="fd"
   # index=c("id","year")
+  # keep.vars=c("id","year","gid","w")
 
   ##setup
   f<-formula
   pf<-pFormula(f)
-  data<-pdata.frame(data,index)
+  pData<-pdata.frame(data,index)
 
   ##restricitons
   if ((model %in% c("fd","within"))!=T){
@@ -42,24 +44,23 @@ panel.transform<-function(
 
   #reduced data
   # x<-d[,c(pindex,as.character(formula[2]))]
-  x<-data[,index]
+  x<-pData[,index]
   x$rowid<-rownames(x)
   rd<-x
 
-
   #model frame
-  x<-model.frame(f,data)
+  x<-model.frame(f,pData)
   mf<-x
   #
 
   #model response
-  x<-pmodel.response(object=pf,data=data,model)
+  x<-pmodel.response(object=pf,data=pData,model)
   x<-data.frame(x)
   names(x)<-names(mf)[1]
   mr<-x
 
   #model matrix - transformed data of explanatory variables
-  x<-model.matrix(pf,data,model)
+  x<-model.matrix(pf,pData,model)
   # n<-names(e$aliased[e$aliased==F])
   # i<-match(n,colnames(x))
   # i<-i[!is.na(i)] #avoid omited constant variables in new data set
@@ -78,9 +79,56 @@ panel.transform<-function(
   #   x<-x[,-i]
   # }
   # coefnames<-names(x)[-1]
-  # x<-data.frame(x) #converts names to be usable in regression
-  mt<-x
 
+  #delete intercept
+  i<-match("(intercept)",colnames(x))
+  x<-x[-i]
+  # converts names to be usable in regression
+  x<-data.frame(x)
+
+  ##additional untransformed info
+  x<-cbind(
+    data[rownames(x),keep.vars],
+    x
+  )
+
+  mt<-x
+  mt
   return(mt)
 
 }
+
+## this was something I started but never finished
+# if (nowrun==T){
+#   d<-spd4testing(N=20,missingY=T,missingX=T)
+#   d
+#   f <- y ~ x + factor(year)
+#   e<-plm(formula=f,data=d,model="fd")
+#   summary(e)
+#
+#   dd<-panel.transform(formula=f,data=d,model="fd",index=c("id","year"),keep.vars=c("id","year","gid","w"))
+#   dd
+#   ss<-dd
+#   ss<-ss[-(1:4)]
+#   ff<-as.formula(paste(names(ss)[1],"~",paste(names(ss)[-1],collapse="+")))
+#   ff
+#   ee<-lm(formula=ff,data=dd)
+#   summary(ee)
+#
+#   library(multiwayvcov)
+#   # if (model=="within"){
+#   #   vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=T)
+#   # }
+#   # if (model=="fd"){
+#     vcovCL<-cluster.vcov(model=ee,cluster=dd$gid,stata_fe_model_rank=F)
+#   # }
+#   library(lmtest)
+#   vcov(ee)
+#   ee$qr
+#
+#   summary(ee)
+#   coeftest(ee, vcovCL)
+#
+# }
+# texreg
+

@@ -7,12 +7,12 @@
 vcovTamal(estimate, data, groupvar, byhand = F)
 }
 \arguments{
-\item{estimate}{an object of class \code{"plm"} estimated with by one of the methods \code{within}, \code{fd}.}
+\item{estimate}{an object of class \code{plm} estimated with the \code{fd} option in methods.}
 
-\item{data}{a data.frame object, that must be the data.frame used to create \code{estimate} object.
+\item{data}{a data.frame object, that must be the data.frame used to create the \code{plm} object.
 Can be a data.frame or a pdata.frame object.}
 
-\item{groupvar}{a string indicating a column in \code{data} to indexes the group structure.}
+\item{groupvar}{a string indicating a column in \code{data} that indicates the group structure.}
 
 \item{byhand}{logical, if TRUE, the clustered covariance matrix is calculated by formulas
 without using the \code{multiwayvcov} package. This method is outdated.}
@@ -21,7 +21,7 @@ without using the \code{multiwayvcov} package. This method is outdated.}
 A matrix containing the covariance matrix estimate
 }
 \description{
-vcovTamal, creates a robust covariance variance matrix clustered at group level for \code{lm} objects.
+vcovTamal, creates a robust covariance variance matrix clustered at group level for first difference estimations of the \code{lm::plm} command.
 Clustering is based on Angist and Pischke (2009) resulting in Stata(TM) like standard errors of
 regression coefficients.
 }
@@ -29,9 +29,10 @@ regression coefficients.
 See package vignette.
 }
 \note{
-The function uses the \code{estimate} and \code{data} to construct a transfomed data frame
-- first differenced or time-demeaned. The esitmate is then re-estimated by OLS with \code{lm} in order to extract the
+The function uses the \code{plm} output and the \code{data} to construct a transfomed (first differenced) data frame.
+The esitmate is then re-estimated by OLS with \code{lm} in order to extract the
 covarinace matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.
+The implementation for Fixed Effects (within) estimates is outdated. Ihe command \code{felm} of the package \code{lfe} is able construct directly estimates with multiple cluster with multiple fixed effects.
 }
 \examples{
 ##packages

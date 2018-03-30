@@ -1,11 +1,11 @@
 #' @title Group clustering of panel data esitmates
-#' @description vcovTamal, creates a robust covariance variance matrix clustered at group level for \code{lm} objects.
+#' @description vcovTamal, creates a robust covariance variance matrix clustered at group level for first difference estimations of the \code{lm::plm} command.
 #' Clustering is based on Angist and Pischke (2009) resulting in Stata(TM) like standard errors of
 #' regression coefficients.
-#' @param estimate an object of class \code{"plm"} estimated with by one of the methods \code{within}, \code{fd}.
-#' @param data a data.frame object, that must be the data.frame used to create \code{estimate} object.
+#' @param estimate an object of class \code{plm} estimated with the \code{fd} option in methods.
+#' @param data a data.frame object, that must be the data.frame used to create the \code{plm} object.
 #' Can be a data.frame or a pdata.frame object.
-#' @param groupvar a string indicating a column in \code{data} to indexes the group structure.
+#' @param groupvar a string indicating a column in \code{data} that indicates the group structure.
 #' @param byhand logical, if TRUE, the clustered covariance matrix is calculated by formulas
 #' without using the \code{multiwayvcov} package. This method is outdated.
 #' @details
@@ -25,9 +25,10 @@
 #' @import plm
 #' @import sandwich
 #' @import multiwayvcov
-#' @note The function uses the \code{estimate} and \code{data} to construct a transfomed data frame
-#' - first differenced or time-demeaned. The esitmate is then re-estimated by OLS with \code{lm} in order to extract the
+#' @note The function uses the \code{plm} output and the \code{data} to construct a transfomed (first differenced) data frame.
+#' The esitmate is then re-estimated by OLS with \code{lm} in order to extract the
 #' covarinace matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.
+#' The implementation for Fixed Effects (within) estimates is outdated. Ihe command \code{felm} of the package \code{lfe} is able construct directly estimates with multiple cluster with multiple fixed effects.
 #' @export
 
 
@@ -51,14 +52,16 @@ vcovTamal<-function(
   if (model %in% c("within")){
     stop('better use the very fast and powerful lfe::felm')
   }
-  if ((model %in% c("fd","within"))!=T){
+  if ((model %in% c("fd"))!=T){
     stop('vcovTamal only applys to plm models of c("fd")')
   }
 
   ##convert plm to lm
+  print("converting plm to lm object")
   et<-plm2lm(estimate=estimate,reestimate=T)
 
   ##group index
+  print("group index")
   if (is.numeric(groupvar)==T){
     stop("groupvar is numeric. not yet implmeted")
   }
@@ -72,6 +75,7 @@ vcovTamal<-function(
   }
 
   ##cluster with multiwayvcov
+  print("clustering with multiwayvcov")
   if (model=="within"){
     vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=T)
   }
