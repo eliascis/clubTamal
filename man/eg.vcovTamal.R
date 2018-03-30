@@ -7,44 +7,47 @@ library(clubSandwich)
 library(spd4testing)
 library(multiwayvcov)
 
-##data
+##setup
+#data
 d<-spd4testing()
 d
-
-##formula
+#formula
 f<- formula(y ~ x + factor(year))
-
-##standard estimation
+#standard estimation
 e<-plm(formula=f,data=d,model="fd")
 summary(e)
-\dontrun{
-  # e<-plm(formula=f,data=d,model="within")
-  # summary(e)
-}
+# e<-plm(formula=f,data=d,model="within")
+# summary(e)
+#for function
+data<-d
+f<-f
+estimate<-e
+groupvar="gid"
+byhand=F
 
-##clustering
-#no clustering
-v<-e$vcov
-coeftest(e)
-#clustering at id level with plm-package
-v<-vcovHC(e,type="HC1",cluster="group",tol=1*10^-20 )
-coeftest(e,v)
-
-##clustering at group level with clubSandwich-package
-##only for Fixed Effects regressions
-v<-vcovCR(e,d$gid,type="CR1")
-coef_test(e,vcov=v,test="naive-t")
-coeftest(e,v)
+# ##clustering
+# #no clustering
+# v<-e$vcov
+# coeftest(e)
+# #clustering at id level with plm-package
+# v<-vcovHC(e,type="HC1",cluster="group",tol=1*10^-20 )
+# coeftest(e,v)
+#
+# ##clustering at group level with clubSandwich-package
+# ##only for Fixed Effects regressions
+# v<-vcovCR(e,d$gid,type="CR1")
+# coef_test(e,vcov=v,test="naive-t")
+# coeftest(e,v)
 
 ##clustering at group level with clubTamal
 v<-vcovTamal(estimate=e,data=d,groupvar="gid")
 coeftest(e,v)
 
-##clustering with clubTamal but without using the multivcov package
-\dontrun{
-v<-vcovTamal(estimate=e,data=d,groupvar="gid",byhand=T)
-coeftest(e,v)
-}
+# ##clustering with clubTamal but without using the multivcov package
+# \dontrun{
+# v<-vcovTamal(estimate=e,data=d,groupvar="gid",byhand=T)
+# coeftest(e,v)
+# }
 
 ##clustering at group level with STATA (TM)
 #export data
@@ -65,5 +68,6 @@ cat("\n")
 cat('reg d.y d.x i.year, vce(cluster gid)')
 sink()
 ## RUN Stata file
+writeClipboard(tdir)
 
 
