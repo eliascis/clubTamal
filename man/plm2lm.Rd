@@ -47,8 +47,10 @@ f<- formula(y ~ x + factor(year))
 ##standard estimation
 e<-plm(formula=f,data=d,model="fd")
 summary(e)
-e<-plm(formula=f,data=d,model="within")
-summary(e)
+\dontrun{
+  # e<-plm(formula=f,data=d,model="within")
+  # summary(e)
+}
 
 ##clustering
 #no clustering

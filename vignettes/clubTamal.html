@@ -12,7 +12,7 @@
 
 <meta name="author" content="Elías Cisneros" />
 
-<meta name="date" content="2017-08-08" />
+<meta name="date" content="2018-03-30" />
 
 <title>Clustered covariance matrix for panel data estimations</title>
 
@@ -32,11 +32,12 @@
 
 <h1 class="title toc-ignore">Clustered covariance matrix for panel data estimations</h1>
 <h4 class="author"><em>Elías Cisneros</em></h4>
-<h4 class="date"><em>2017-08-08</em></h4>
+<h4 class="date"><em>2018-03-30</em></h4>
 
 
 
-<p>The package <code>clubTamal</code> creates clustered covariance matrices for panel data models estimated with <code>plm</code>. Cluster groups can be defined at higher levels than the individual observations. E.g. for estimations on yearly houshold data it is possible to cluster at the state level. Package runs for First Difference estimates (<code>model=&quot;fd&quot;</code>) and Fixed Effects estimates (<code>model=&quot;within&quot;</code>).</p>
+<p>The package <code>clubTamal</code> creates clustered covariance matrices for first difference panel data models estimated by <code>plm</code>. Cluster groups can be defined at higher levels than the individual observations. E.g. for estimations on yearly houshold data it is possible to cluster at the state level. Package runs for First Difference estimates (<code>model=&quot;fd&quot;</code>).</p>
+<p><em>Note:</em> The option for Fixed Effects estimates (<code>model=&quot;within&quot;</code>) is outdated as the package <code>fle</code> with the <code>felm</code> command does a much better job.</p>
 <div id="clustering" class="section level2">
 <h2>Clustering</h2>
 <p>N - Number of observations</p>
@@ -60,7 +61,7 @@ citation(clubTamal)</code></pre>
 </div>
 <div id="note" class="section level2">
 <h2>Note</h2>
-<p>The function uses the <code>estimate</code> argument and the <code>data</code> argument to construct a transfomed data frame - first differenced or time-demeaned. The esitmate is then re-estimated by OLS with <code>lm</code> in order to extract the covarinace matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.</p>
+<p>The function uses the <code>estimate</code> argument and the <code>data</code> argument to construct a transformed data frame - first differenced or time-demeaned. The estimate is then re-estimated by OLS with <code>lm</code> in order to extract the covariance matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.</p>
 </div>
 <div id="examples" class="section level2">
 <h2>Examples</h2>
@@ -128,7 +129,7 @@ sink()
 </div>
 <div id="citation" class="section level2">
 <h2>Citation</h2>
-<p>Elias Cisneros (2017). clubTamal: Clustered covariance matrix for panel data estimations. R package version 0.1.1.</p>
+<p>Elias Cisneros (2017). clubTamal: Clustered covariance matrix for panel data estimations. R package version 0.1.4.</p>
 </div>
 <div id="links-and-references" class="section level2">
 <h2>Links and References</h2>
