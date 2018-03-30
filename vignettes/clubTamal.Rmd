@@ -9,8 +9,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The package `clubTamal` creates clustered covariance matrices for panel data models estimated with `plm`. Cluster groups can be defined at higher levels than the individual observations. E.g. for estimations on yearly houshold data it is possible to cluster at the state level. 
-Package runs for First Difference estimates (`model="fd"`) and Fixed Effects estimates (`model="within"`). 
+The package `clubTamal` creates clustered covariance matrices for first difference panel data models estimated by `plm`. Cluster groups can be defined at higher levels than the individual observations. E.g. for estimations on yearly houshold data it is possible to cluster at the state level. 
+Package runs for First Difference estimates (`model="fd"`). 
+
+*Note:* The option for Fixed Effects estimates (`model="within"`) is outdated as the package `fle` with the `felm` command does a much better job.
     
 ## Clustering
 N - Number of observations
@@ -39,9 +41,9 @@ citation(clubTamal)
 
 
 ## Note 
-The function uses the `estimate` argument and the `data` argument to construct a transfomed data frame
-- first differenced or time-demeaned. The esitmate is then re-estimated by OLS with `lm` in order to extract the
-covarinace matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.
+The function uses the `estimate` argument and the `data` argument to construct a transformed data frame
+- first differenced or time-demeaned. The estimate is then re-estimated by OLS with `lm` in order to extract the
+covariance matrix and correct for degrees of freedom and use a sandwich estimate with the group structure.
 
 
 
@@ -119,7 +121,7 @@ sink()
 
 ##Citation
 Elias Cisneros (2017). clubTamal: Clustered covariance matrix for panel
-  data estimations. R package version 0.1.1.
+  data estimations. R package version 0.1.4.
 
 ## Links and References
 Angrist, J. D. & Pischke, J.-S. Mostly harmless econometrics: An empiricist's companion Princeton university press, 2009
