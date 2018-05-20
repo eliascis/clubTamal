@@ -45,6 +45,10 @@ vcovTamal<-function(
   # f<-formula(y~x+factor(year))
   # estimate<-plm(f,data,method="within")
 
+  # estimate<-e
+  # data<-x$data
+  # groupvar="municip_geocode_id"
+
   #setup
   model<- estimate$args$model
 
@@ -76,7 +80,7 @@ vcovTamal<-function(
 
   ##cluster with multiwayvcov
   print("clustering with multiwayvcov")
-  if (model=="within"){
+  if (model=="within"){ #(outdated)
     vcovCL<-cluster.vcov(et,gx,stata_fe_model_rank=T)
   }
   if (model=="fd"){
