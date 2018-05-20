@@ -51,7 +51,7 @@ plm2lm<-function(estimate,reestimate=T){
 
   #model frame
   x<-e$model
-  x<-model.frame(formula=formula,data=pdata.frame(d))
+  # x<-model.frame(formula=formula,data=pdata.frame(d)) #already a pdata.frame?
   mf<-x
 
   #model response
