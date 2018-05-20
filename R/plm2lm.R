@@ -24,9 +24,9 @@ plm2lm<-function(estimate,reestimate=T){
 
   ###conversion by reestimation
   #example
-  # d<-spd4testing(missingX=T)
-  # f<-formula(y~x+factor(year))
-  # e<-plm(f,d,model="within")
+  d<-spd4testing(missingX=F,missingY=F,missing.pre.years=F,holes=F)
+  f<-formula(y~x+factor(year))
+  e<-plm(f,d,model="fd")
 
   ##setup
   e<-estimate
@@ -34,8 +34,8 @@ plm2lm<-function(estimate,reestimate=T){
   model<-e$args$model
 
   ##restricitons
-  if ((model %in% c("fd","within"))!=T){
-    stop('vcovTamal only applys to plm models of c("fd","within")')
+  if ((model %in% c("fd"))!=T){
+    stop('vcovTamal only applys to plm models of c("fd")')
   }
 
 
@@ -51,10 +51,12 @@ plm2lm<-function(estimate,reestimate=T){
 
   #model frame
   x<-e$model
+  x<-model.frame(formula=formula,data=pdata.frame(d))
   mf<-x
 
   #model response
-  x<-pmodel.response(formula,mf,model)
+  # x<-plm::pmodel.response(formula,mf,model)
+  x<-plm::pmodel.response(e)
   x<-data.frame(x)
   names(x)<-names(mf)[1]
   mr<-x
