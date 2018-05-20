@@ -24,9 +24,9 @@ plm2lm<-function(estimate,reestimate=T){
 
   ###conversion by reestimation
   #example
-  d<-spd4testing(missingX=F,missingY=F,missing.pre.years=F,holes=F)
-  f<-formula(y~x+factor(year))
-  e<-plm(f,d,model="fd")
+  # d<-spd4testing(missingX=F,missingY=F,missing.pre.years=F,holes=F)
+  # f<-formula(y~x+factor(year))
+  # e<-plm(f,d,model="fd")
 
   ##setup
   e<-estimate
